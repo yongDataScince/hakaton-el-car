@@ -9,7 +9,6 @@ class HBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: Container(),
     );
   }
 }
