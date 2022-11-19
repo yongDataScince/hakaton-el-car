@@ -8,10 +8,10 @@ import 'package:mobile_app/features/cars_list/domain/entities/car_entity.dart';
 import 'package:mobile_app/features/cars_list/domain/repositories/user_repository.dart';
 import 'package:mobile_app/features/cars_list/domain/usecases/get_user.dart';
 
-class UserRepositoryImpl implements UserRepository {
-  final UserRemoteDataSource userRemoteDatasource;
+class CarsRepositoryImpl implements CarsRepository {
+  final CarsRemoteDataSource userRemoteDatasource;
 
-  const UserRepositoryImpl(this.userRemoteDatasource);
+  const CarsRepositoryImpl(this.userRemoteDatasource);
 
   @override
   Future<Either<Failure, List<CarEntity>>> getCars(

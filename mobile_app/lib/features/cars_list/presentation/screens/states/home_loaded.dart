@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/components/boxes/h_box.dart';
 import 'package:mobile_app/components/custom_text_field.dart';
+import 'package:mobile_app/features/cars_list/presentation/screens/main/add_car_screen.dart';
 import 'package:mobile_app/features/cars_list/presentation/store/user_store.dart';
 import 'package:mobile_app/features/cars_list/presentation/widgets/add_car_button.dart';
 import 'package:mobile_app/features/cars_list/presentation/widgets/car_widget.dart';
@@ -22,12 +23,21 @@ class HomeScreenLoaded extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              CustomTextField(
+            children: [
+              const CustomTextField(
                 width: 290,
                 hintText: '🔍 Поиск',
               ),
-              AddCarButton(),
+              GestureDetector(
+                child: const AddCarButton(),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => const AddCarScreen(),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           const HBox(30),

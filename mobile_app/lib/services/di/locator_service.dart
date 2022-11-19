@@ -28,23 +28,23 @@ void setup() {
     () => PostRegister(getIt()),
   );
   getIt.registerLazySingleton(
-    () => GetUser(getIt()),
+    () => GetCars(getIt()),
   );
 
   // Repositories
   getIt.registerFactory<AuthRepository>(
     () => AuthRepositoryImpl(getIt()),
   );
-  getIt.registerFactory<UserRepository>(
-    () => UserRepositoryImpl(getIt()),
+  getIt.registerFactory<CarsRepository>(
+    () => CarsRepositoryImpl(getIt()),
   );
 
   // Data Sources
   getIt.registerLazySingleton<AuthDataRemoteDataSource>(
     () => AuthDataRemoteDataSourceImpl(getIt()),
   );
-  getIt.registerLazySingleton<UserRemoteDataSource>(
-    () => UserRemoteDataSourceImpl(getIt()),
+  getIt.registerLazySingleton<CarsRemoteDataSource>(
+    () => CarsRemoteDataSourceImpl(getIt()),
   );
 
   // getIt.registerLazySingleton<NetworkInfo>(

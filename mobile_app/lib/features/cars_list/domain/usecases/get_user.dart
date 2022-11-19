@@ -4,10 +4,10 @@ import 'package:mobile_app/core/usecases/usecase.dart';
 import 'package:mobile_app/features/cars_list/domain/entities/car_entity.dart';
 import 'package:mobile_app/features/cars_list/domain/repositories/user_repository.dart';
 
-class GetUser extends UseCaseWithParams<List<CarEntity>, UserParams> {
-  final UserRepository _repo;
+class GetCars extends UseCaseWithParams<List<CarEntity>, UserParams> {
+  final CarsRepository _repo;
 
-  GetUser(this._repo);
+  GetCars(this._repo);
 
   @override
   Future<Either<Failure, List<CarEntity>>> call(UserParams params) =>
