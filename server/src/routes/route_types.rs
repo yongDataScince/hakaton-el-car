@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 
-use crate::types::BodyType;
+use crate::types::{BodyType, Role};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GetUserQuery {
@@ -51,9 +51,19 @@ pub struct GetCarQuery {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct RemoveCarQuery {
+  pub access_token: String,
+  #[serde(skip_serializing_if="Option::is_none")]
+  pub car_number: Option<String>,
+  #[serde(skip_serializing_if="Option::is_none")]
+  pub car_id: Option<Uuid>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RegUserQuery {
   pub name: String,
   pub fam_name: String,
+  pub role: Role,
   pub email: String,
   pub patronymic: String,
   pub passport_number: String,

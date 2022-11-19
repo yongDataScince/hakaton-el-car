@@ -1,9 +1,9 @@
 pub mod route_types;
-use axum::{extract::State, response::IntoResponse, http::StatusCode, Json};
+use axum::{extract::{State, Query}, response::IntoResponse, http::StatusCode, Json};
 use uuid::Uuid;
 
 use crate::types::{AppState, Car};
-use self::route_types::{AuthQuery, AuthResponse, GetCarQuery, RegUserQuery, RegCar, UserResponse, GetUserQuery};
+use self::route_types::{AuthQuery, AuthResponse, GetCarQuery, RegUserQuery, RegCar, UserResponse, GetUserQuery, RemoveCarQuery};
 
 pub async fn auth_user(
   State(state): State<AppState>,
@@ -19,7 +19,7 @@ pub async fn auth_user(
 
 pub async fn get_user(
   State(state): State<AppState>,
-  Json(query): Json<GetUserQuery>
+  Query(query): Query<GetUserQuery>
 ) -> Result<Json<UserResponse>, (StatusCode, String)> {
   let info = state.db_pool.get_user(query.phone.clone()).map_err(|e| {
     eprintln!("{:?}", e);
@@ -32,8 +32,10 @@ pub async fn reg_user(
   State(state): State<AppState>,
   Json(query): Json<RegUserQuery>
 ) -> Result<Json<AuthResponse>, (StatusCode, String)> {
+
   let access_token = state.db_pool.create_user(
     query.phone,
+    query.role,
     query.name,
     query.fam_name,
     query.patronymic,
@@ -69,7 +71,6 @@ pub async fn get_car(
   Err((StatusCode::BAD_REQUEST, "Please provide CAR_ID or CAR_NUMBER".to_string()))
 }
 
-
 pub async fn reg_car(
   State(state): State<AppState>,
   Json(query): Json<RegCar>
@@ -92,6 +93,48 @@ pub async fn reg_car(
   })?;
 
   Ok(Json(car_id))
+}
+
+pub async fn check_pts(
+
+) -> impl IntoResponse {
+  
+  let t = tesseract::ocr("./img.png", "ru").map_err(|e| {
+    eprintln!("Error: {e}");
+  }).unwrap();
+
+  println!("{t}");
+
+  (StatusCode::OK, "")
+}
+
+pub async fn remove_car(
+  State(state): State<AppState>,
+  Json(query): Json<RemoveCarQuery> 
+) -> impl IntoResponse {
+  if query.car_number.is_some() {
+    return match state.db_pool.remove_car_by_number(query.car_number.unwrap(), query.access_token) {
+      Ok(_) => {
+        return (StatusCode::OK, "Car removed");
+      },
+      Err(e) => {
+        eprintln!("REM CAR: {:?}", e);
+        (StatusCode::BAD_REQUEST, "Invalid car number")
+      }
+    };
+  } else if query.car_id.is_some() {
+    return match state.db_pool.remove_car_by_id(query.car_id.unwrap(), query.access_token) {
+      Ok(_) => {
+        return (StatusCode::OK, "Car removed");
+      },
+      Err(e) => {
+        eprintln!("REM CAR: {:?}", e);
+        (StatusCode::BAD_REQUEST, "Invalid car id")
+      }
+    };
+  }
+
+  (StatusCode::BAD_REQUEST, "No car_id or car_number")  
 }
 
 pub async fn index() -> impl IntoResponse {

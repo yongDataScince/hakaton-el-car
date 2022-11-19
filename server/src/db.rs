@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{
   prelude::*,
-  types::{Car, BodyType},
+  types::{Car, BodyType, Role},
   errors::DBError, routes::route_types::UserResponse
 };
 
@@ -51,6 +51,7 @@ impl DataBase {
         CREATE TABLE IF NOT EXISTS users (
           id TEXT NOT NULL UNIQUE,
           phone TEXT NOT NULL UNIQUE,
+          role TEXT NOT NULL,
           car_ids TEXT,
           email TEXT,
           name TEXT,
@@ -70,7 +71,7 @@ impl DataBase {
     Ok(DataBase { db_path: file_path.to_string() })
   }
 
-  pub fn create_user(&self, phone: String, name: String, fam_name: String, patronymic: String, email: String, passport_number: String, driver_license: String, password: String) -> Result<String, DBError> {
+  pub fn create_user(&self, phone: String, role: Role, name: String, fam_name: String, patronymic: String, email: String, passport_number: String, driver_license: String, password: String) -> Result<String, DBError> {
     let connection = sqlite::open(self.db_path.clone()).map_err(|e| {
       eprintln!("DB ERROR CONNECTION: {e}");
       DBError::ConnectionError
@@ -86,9 +87,9 @@ impl DataBase {
 
     let mut query = connection.prepare("
       INSERT INTO users (
-        id, phone, car_ids, email, name, family_name, patronymic, passport_number, driver_license, password, access_token
+        id, phone, role, car_ids, email, name, family_name, patronymic, passport_number, driver_license, password, access_token
       ) VALUES (
-        ?1, ?2, '[]', ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10
+        ?1, ?2, ?3, '[]', ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11
       );
     ").map_err(|e| {
       eprintln!("DB ERROR CREATE USER: {e}");
@@ -103,35 +104,39 @@ impl DataBase {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(3, email.as_str()).map_err(|e| {
+    query.bind(3, role.to_string().as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(4, name.as_str()).map_err(|e| {
+    query.bind(4, email.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(5, fam_name.as_str()).map_err(|e| {
+    query.bind(5, name.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(6, patronymic.as_str()).map_err(|e| {
+    query.bind(6, fam_name.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(7, passport_number.as_str()).map_err(|e| {
+    query.bind(7, patronymic.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(8, driver_license.as_str()).map_err(|e| {
+    query.bind(8, passport_number.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(9, password.as_str()).map_err(|e| {
+    query.bind(9, driver_license.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
-    query.bind(10, access_token.as_str()).map_err(|e| {
+    query.bind(10, password.as_str()).map_err(|e| {
+      eprintln!("DB ERROR CREATE USER BIND: {e}");
+      DBError::UserCreation
+    })?;
+    query.bind(11, access_token.as_str()).map_err(|e| {
       eprintln!("DB ERROR CREATE USER BIND: {e}");
       DBError::UserCreation
     })?;
@@ -343,7 +348,6 @@ impl DataBase {
         DBError::GetUsers
       })?;
 
-      println!("{cars_ids}");
       let mut cars_ids_vec: Vec<Uuid> = Vec::new();
   
       if cars_ids != "[]" {
@@ -694,6 +698,217 @@ impl DataBase {
       });
     } else {
       return Err(DBError::GetUsers);
+    }
+  }
+
+  pub fn check_access_token(&self, phone: String, access_token: String) -> Result<bool, DBError> {
+    let connection = sqlite::open(self.db_path.clone()).map_err(|e| {
+      eprintln!("DB ERROR CONNECTION: {e}");
+      DBError::ConnectionError
+    })?;
+
+    let mut query = connection.prepare("SELECT access_token FROM users WHERE phone = ?;").map_err(|e| {
+      eprintln!("ERROR IN GET USER: {e}");
+      DBError::AuthUser
+    })?;
+
+    query.bind(1, phone.as_str()).map_err(|e| {
+      eprintln!("ERROR IN BIND: {e}");
+      DBError::GetUsers
+    })?;
+
+    if let State::Row = query.next().map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })? {
+      let db_access_token = query.read::<String>(0).map_err(|e| {
+        eprintln!("ERROR IN GET ACC_TOKEN: {e}");
+        DBError::GetUsers
+      })?;
+
+      return Ok(db_access_token == access_token);
+    } else {
+      return Err(DBError::AuthUser);
+    }
+  }
+
+  pub fn remove_car_by_id(&self, car_id: Uuid, access_token: String) -> Result<bool, DBError> {
+    let connection = sqlite::open(self.db_path.clone()).map_err(|e| {
+      eprintln!("DB ERROR CONNECTION: {e}");
+      DBError::ConnectionError
+    })?;
+
+    let mut owner_id_query = connection.prepare("SELECT id FROM users WHERE access_token = ?;").unwrap();
+
+    owner_id_query.bind(1, access_token.as_str()).unwrap();
+
+    let mut owner_id: String = String::new();
+
+    if let State::Row = owner_id_query.next().map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })? {
+      owner_id = owner_id_query.read::<String>(0).unwrap();
+    }
+
+    let car = self.get_car_by_id(car_id.clone())?;
+    if car.owner_id.to_string() != owner_id {
+      return Err(DBError::AuthUser);
+    }
+
+    let mut query = connection.prepare(
+      "
+        DELETE FROM cars WHERE id = ?;
+      "
+    ).map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })?;
+
+    query.bind(1, car_id.to_string().as_str()).map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })?;
+    
+    match  query.next() {
+      Ok(_) => {
+        let mut get_user_cars_query = connection.prepare(
+          "SELECT car_ids FROM users WHERE id = ?;"
+        ).map_err(|e| {
+          eprintln!("ERROR IN GET USER CARS: {e}");
+          DBError::GetUsers
+        })?;
+  
+        get_user_cars_query.bind(1, owner_id.as_str()).unwrap();
+  
+        let mut car_ids: String = String::new();
+  
+        match  get_user_cars_query.next() {
+            Ok(_) => {
+              car_ids = get_user_cars_query.read::<String>(0).unwrap();
+
+              if car_ids == "[]" {
+                let format_id = format!("{car_id}");
+                car_ids = car_ids.clone().replace(format_id.as_str(), "");
+              } else {
+                let format_id = format!(", {car_id}");
+                car_ids = car_ids.clone().replace(format_id.as_str(), "");
+              }
+        
+              let mut ins_query = connection.prepare("UPDATE users SET car_ids = ?1 WHERE id = ?2;").map_err(|e| {
+                eprintln!("ERROR IN INSERT NEW_IDS: {e}");
+                DBError::IdsInsertion
+              })?;
+
+              println!("{car_ids}");
+
+              ins_query.bind(1, car_ids.as_str()).unwrap();
+              ins_query.bind(2, owner_id.as_str()).unwrap();
+        
+              ins_query.next().unwrap();
+        
+              Ok(true)
+            },
+            Err(e) => {
+              eprintln!("ERROR: {e}");
+              return Err(DBError::GetUsers);
+            }
+          }
+      }
+      Err(e) => {
+        println!("ERROR HERE: {e}");
+        return Err(DBError::GetUsers);
+      }
+    }
+  }
+
+  pub fn remove_car_by_number(&self, car_number: String, access_token: String) -> Result<bool, DBError> {
+    let connection = sqlite::open(self.db_path.clone()).map_err(|e| {
+      eprintln!("DB ERROR CONNECTION: {e}");
+      DBError::ConnectionError
+    })?;
+
+    let mut owner_id_query = connection.prepare("SELECT id FROM users WHERE access_token = ?;").unwrap();
+
+    owner_id_query.bind(1, access_token.as_str()).unwrap();
+
+    let mut owner_id: String = String::new();
+
+    if let State::Row = owner_id_query.next().map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })? {
+      owner_id = owner_id_query.read::<String>(0).unwrap();
+    }
+
+    let car = self.get_car(car_number.clone())?;
+    if car.owner_id.to_string() != owner_id {
+      return Err(DBError::AuthUser);
+    }
+
+    let car_id = self.get_car(car_number.clone())?.id;
+
+    let mut query = connection.prepare(
+      "
+        DELETE FROM cars WHERE car_number = ?;
+      "
+    ).map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })?;
+
+    query.bind(1, car_number.as_str()).map_err(|e| {
+      eprintln!("DB ERROR GET DATA: {e}");
+      DBError::GetUsers
+    })?;
+    
+    match  query.next() {
+      Ok(_) => {
+        let mut get_user_cars_query = connection.prepare(
+          "SELECT car_ids FROM users WHERE id = ?;"
+        ).map_err(|e| {
+          eprintln!("ERROR IN GET USER CARS: {e}");
+          DBError::GetUsers
+        })?;
+  
+        get_user_cars_query.bind(1, owner_id.as_str()).unwrap();
+    
+        match  get_user_cars_query.next() {
+            Ok(_) => {
+              let mut car_ids = get_user_cars_query.read::<String>(0).unwrap();
+          
+              if car_ids == format!("[{car_id}]") {
+                let format_id = format!("[{car_id}]");
+                car_ids = car_ids.clone().replace(format_id.as_str(), "[]");
+              } else {
+                let format_id = format!(", {car_id}");
+                car_ids = car_ids.clone().replace(format_id.as_str(), "");
+              }
+        
+              let mut ins_query = connection.prepare("UPDATE users SET car_ids = ?1 WHERE id = ?2;").map_err(|e| {
+                eprintln!("ERROR IN INSERT NEW_IDS: {e}");
+                DBError::IdsInsertion
+              })?;
+
+              println!("{car_ids}");
+        
+              ins_query.bind(1, car_ids.as_str()).unwrap();
+              ins_query.bind(2, owner_id.as_str()).unwrap();
+        
+              ins_query.next().unwrap();
+        
+              Ok(true)
+            },
+            Err(e) => {
+              eprintln!("ERROR: {e}");
+              return Err(DBError::GetUsers);
+            }
+          }
+      }
+      Err(e) => {
+        println!("ERROR HERE: {e}");
+        return Err(DBError::GetUsers);
+      }
     }
   }
 

@@ -19,6 +19,21 @@ pub enum BodyType {
   Van,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub enum Role {
+  Admin,
+  User
+}
+
+impl Role {
+    pub fn to_string(self) -> String {
+      match self {
+          Role::Admin => String::from("admin"),
+          Role::User => String::from("user")
+      }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct SelfData {
   pub email: String,
@@ -35,8 +50,10 @@ pub struct SelfData {
 pub struct User {
   pub user_id: Uuid,
   pub cars: Vec<Car>,
-  pub user_self_data: SelfData
+  pub user_self_data: SelfData,
+  pub role: Role
 }
+
 
 #[derive(Serialize, Deserialize)]
 pub struct Car {

@@ -6,11 +6,16 @@ edition = "2021"
 [dependencies]
 uuid              = { version = "1", features = ["serde", "v4"] }
 tokio             = { version = "1.0", features = ["full"] }
-tower-http        = { version = "0.3.0", features = ["cors"] }
+tower-http        = { version = "0.3.0", features = ["cors", "trace"] }
 serde_json        = { version = "1" }
 serde             = { version = "1", default-features = false, features = ["derive"] }
 axum              = "0.6.0-rc.1"
+tokio-util        = { version = "0.7", features = ["io"] }
 dotenv            = "0.15"
 sqlite            = "0.28.0"
 sha2              = "0.10.6"
 hex               = "0.4.3"
+futures           = "0.3.25"
+tracing           = { version = "0.1" }
+hyper             = "0.14.20"
+tesseract         = "0.12.0"
