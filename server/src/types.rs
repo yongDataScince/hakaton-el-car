@@ -1,11 +1,14 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-pub struct AppState {
+use crate::db::DataBase;
 
+#[derive(Clone)]
+pub struct AppState {
+  pub db_pool: DataBase
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum BodyType {
   Hatchback,
   Sedan,
@@ -54,6 +57,7 @@ pub struct Car {
 impl From<String> for BodyType {
     fn from(s: String) -> BodyType {
       use BodyType::*;
+      println!("type: {s}");
       match s.as_str() {
         "Hatchback"  => Hatchback,
         "Sedan" => Sedan,
@@ -64,5 +68,21 @@ impl From<String> for BodyType {
         "Van" => Van,
         _ => panic!("Unexpected body type")
       }
+    }
+}
+
+impl BodyType {
+    pub fn to_string(self) -> String {
+        use BodyType::*;
+
+        match self {
+            Hatchback => "Hatchback".into(),
+            Sedan => "Sedan".into(),
+            MUVSUV => "MUVSUV".into(),
+            Coupe => "Coupe".into(),
+            Convertible => "Convertible".into(),
+            Jeep => "Jeep".into(),
+            Van => "Van".into()
+        }
     }
 }

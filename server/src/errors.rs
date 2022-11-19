@@ -5,5 +5,7 @@ pub enum DBError {
   GetUsers,
   UserCreation,
   AuthUser,
-  IncorrectPassword
+  IncorrectPassword,
+  CarCreation,
+  IdsInsertion
 }
