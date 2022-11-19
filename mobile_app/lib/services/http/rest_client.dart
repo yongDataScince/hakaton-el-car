@@ -54,4 +54,3 @@ abstract class RestClient {
   })
   Future<CarModel> getCar(@Query('car_id') String carId);
 }
-// Future<CarModel> getCar(@Query('carId') Map<String, dynamic> carId);

@@ -13,54 +13,71 @@ class LoginScreen extends StatelessWidget {
   String? phone;
   String? password;
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     final store = context.read<AuthStore>();
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const HBox(204),
-          const Text(
-            'Авторизация',
-            style: TextStyle(fontSize: 20),
-          ),
-          const HBox(84),
-          CustomTextField(
-            hintText: 'Номер',
-            onChanged: (value) => phone = value,
-          ),
-          const HBox(25),
-          CustomTextField(
-            hintText: 'Пароль',
-            onChanged: (value) => password = value,
-          ),
-          const HBox(17),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AuthButton(
-                onTap: () async {
-                  // if (phone != null && password != null) {
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const HBox(204),
+            const Text(
+              'Авторизация',
+              style: TextStyle(fontSize: 20),
+            ),
+            const HBox(84),
+            CustomTextField(
+              hintText: 'Номер',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                phone = value;
+                return null;
+              },
+            ),
+            const HBox(15),
+            CustomTextField(
+              hintText: 'Пароль',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                password = value;
+                return null;
+              },
+            ),
+            const HBox(17),
+            AuthButton(
+              onTap: () async {
+                if (_formKey.currentState!.validate()) {
                   await store.login(
                     LoginParams(
-                      phone: '89180000000', // 89180000000
-                      password: 'test123', // test123
+                      phone: phone!,
+                      password: password!,
                     ),
                   );
-                  // }
-                  // ignore: use_build_context_synchronously
-                  // Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const HomeScreen()));
-                },
-              ),
-              const HBox(10),
-              const ChangeAuthMethod(),
-            ],
-          )
-        ],
+                }
+              },
+            ),
+            const HBox(15),
+            AuthButton(
+              customText: 'Войти без рег. (тест)',
+              onTap: () async {
+                await store.login(
+                  LoginParams(
+                    phone: '89180000000',
+                    password: 'test123',
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_app/core/builders/entity_builder.dart';
 import 'package:mobile_app/features/cars_list/domain/usecases/get_user.dart';
 import 'package:mobile_app/features/cars_list/presentation/screens/states/home_loaded.dart';
@@ -26,7 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Car-D'),
+        title: Text(
+          'Car-D',
+          style: GoogleFonts.balooChettan2(),
+        ),
       ),
       body: Provider<UserStore>(
         create: (context) => userStore,

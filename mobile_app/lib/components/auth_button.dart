@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 class AuthButton extends StatelessWidget {
   const AuthButton({
     super.key,
+    this.customText,
     required this.onTap,
   });
 
+  final String? customText;
   final void Function()? onTap;
 
   @override
@@ -25,7 +27,8 @@ class AuthButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          store.authTypeIsLogin ? 'Войти' : 'Зарегистрироваться',
+          customText ??
+              (store.authTypeIsLogin ? 'Войти' : 'Зарегистрироваться'),
           style: const TextStyle(fontSize: 20),
         ),
       ),

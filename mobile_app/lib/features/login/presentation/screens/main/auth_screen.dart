@@ -29,6 +29,13 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       );
     };
+    authStore.showWrongLoginOrPassword = () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Неверный логин или пароль'),
+        ),
+      );
+    };
     super.initState();
   }
 

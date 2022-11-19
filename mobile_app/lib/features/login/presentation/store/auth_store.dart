@@ -24,13 +24,14 @@ abstract class _AuthStore with Store {
 
   Function()? navigationPush;
 
+  Function()? showWrongLoginOrPassword;
+
   @action
   Future<void> login(LoginParams loginParams) async {
-    loadState = LoadStates.loading;
     final response = await postLogin(loginParams);
-    response.fold((l) => loadState = LoadStates.failed, (r) {
-      navigationPush!();
-    });
+    response.fold((l) {
+      showWrongLoginOrPassword!();
+    }, (r) => navigationPush!());
   }
 
   @action
