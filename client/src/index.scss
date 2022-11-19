@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Electrolize&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Electrolize', sans-serif;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow-x: hidden;
+}
+
+.App {
+  width: 100vw;
+  height: 100vw;
+  background: #141E27;
+  color: #FFF;
+  padding: 32px;
+}
+
+.title {
+  font-size: 138px;
+  margin: 0;
+}
+
+.cat-card {
+  
+}
