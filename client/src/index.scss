@@ -28,6 +28,18 @@ html, body, #root {
   margin: 0;
 }
 
-.cat-card {
-  
+.card-img {
+  width: 40%;
+}
+
+.card-container {
+  margin-top: 100px;
+  padding: 32px;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.text {
+  font-size: 40px;
 }
