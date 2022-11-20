@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:mobile_app/features/cars_list/domain/entities/car_entity.dart';
 
 class CarScreen extends StatelessWidget {

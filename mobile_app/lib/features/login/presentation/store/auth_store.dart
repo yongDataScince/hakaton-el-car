@@ -1,5 +1,6 @@
 import 'package:mobile_app/features/login/domain/usecases/post_login.dart';
 import 'package:mobile_app/features/login/domain/usecases/post_register.dart';
+import 'package:mobile_app/utilities/accsess_token.dart';
 import 'package:mobile_app/utilities/load_states.dart';
 import 'package:mobx/mobx.dart';
 
@@ -31,7 +32,10 @@ abstract class _AuthStore with Store {
     final response = await postLogin(loginParams);
     response.fold((l) {
       showWrongLoginOrPassword!();
-    }, (r) => navigationPush!());
+    }, (r) {
+      AccessToken.accessToken = r.accessToken;
+      navigationPush!();
+    });
   }
 
   @action

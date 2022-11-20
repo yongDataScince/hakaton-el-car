@@ -1,5 +1,3 @@
-import 'package:camera/camera.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:mobile_app/core/stores/load_params.dart';
 import 'package:mobile_app/features/cars_list/domain/entities/car_entity.dart';
 import 'package:mobile_app/features/cars_list/domain/usecases/get_user.dart';

@@ -49,6 +49,7 @@ flutter:
   assets:
     - assets/images/
     - assets/tessdata_config.json
+    - assets/tessdata/
   #   - images/a_dot_ham.jpeg
 
   # fonts:

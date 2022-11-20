@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:mobile_app/features/cars_list/data/models/car_model.dart';
 import 'package:mobile_app/features/cars_list/domain/usecases/get_user.dart';
 import 'package:mobile_app/services/http/rest_client.dart';
+import 'package:mobile_app/utilities/accsess_token.dart';
 
 abstract class CarsRemoteDataSource {
   Future<List<CarModel>> getCars(UserParams userParams);
@@ -16,6 +15,7 @@ class CarsRemoteDataSourceImpl implements CarsRemoteDataSource {
   @override
   Future<List<CarModel>> getCars(UserParams userParams) async {
     final user = await client.getUser(userParams.phone);
+    AccessToken.userId = user.id;
     final List<CarModel> cars = [];
     for (var carId in user.carsIds) {
       final car = await client.getCar(carId);

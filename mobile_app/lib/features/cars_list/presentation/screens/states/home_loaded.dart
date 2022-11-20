@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mobile_app/components/boxes/h_box.dart';
 import 'package:mobile_app/components/custom_text_field.dart';
@@ -7,7 +5,6 @@ import 'package:mobile_app/features/cars_list/presentation/screens/main/add_car_
 import 'package:mobile_app/features/cars_list/presentation/store/user_store.dart';
 import 'package:mobile_app/features/cars_list/presentation/widgets/add_car_button.dart';
 import 'package:mobile_app/features/cars_list/presentation/widgets/car_widget.dart';
-import 'package:mobile_app/features/cars_list/presentation/widgets/search_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreenLoaded extends StatelessWidget {
@@ -35,7 +32,9 @@ class HomeScreenLoaded extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (ctx) => const AddCarScreen(),
                     ),
-                  );
+                  )
+                      // .then((_) => store.loadEntity())
+                      ;
                 },
               ),
             ],

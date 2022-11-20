@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/components/auth_button.dart';
 import 'package:mobile_app/components/boxes/h_box.dart';
-import 'package:mobile_app/components/change_auth_type.dart';
 import 'package:mobile_app/components/custom_text_field.dart';
 import 'package:mobile_app/features/login/domain/usecases/post_login.dart';
 import 'package:mobile_app/features/login/presentation/store/auth_store.dart';
@@ -34,7 +33,7 @@ class LoginScreen extends StatelessWidget {
               hintText: 'Номер',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Пожалуйста, введите что-то';
                 }
                 phone = value;
                 return null;
@@ -45,7 +44,7 @@ class LoginScreen extends StatelessWidget {
               hintText: 'Пароль',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Пожалуйста, введите что-то';
                 }
                 password = value;
                 return null;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/features/cars_list/presentation/screens/main/add_car_screen.dart';
 import 'package:mobile_app/features/login/presentation/screens/main/auth_screen.dart';
 import 'package:mobile_app/services/di/locator_service.dart' as di;
 

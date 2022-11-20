@@ -53,4 +53,10 @@ abstract class RestClient {
     "Content-Type": "application/json",
   })
   Future<CarModel> getCar(@Query('car_id') String carId);
+
+  @POST(HttpConstants.regCar)
+  @Headers(<String, dynamic>{
+    "Content-Type": "application/json",
+  })
+  Future<void> regCar(@Body() Map<String, dynamic> map);
 }

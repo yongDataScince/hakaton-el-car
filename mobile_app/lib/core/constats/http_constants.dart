@@ -4,4 +4,5 @@ class HttpConstants {
   static const String signUpPostUrl = '/reg-user';
   static const String getUser = '/get-user';
   static const String getCar = '/get-car';
+  static const String regCar = '/reg-car';
 }

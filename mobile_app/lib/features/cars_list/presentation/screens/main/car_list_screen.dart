@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Car-D',
+          'E-CARD',
           style: GoogleFonts.balooChettan2(),
         ),
       ),
