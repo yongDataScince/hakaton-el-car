@@ -47,5 +47,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>E-Car requires access to your phone’s camera.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Library</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Micro</string>
 </dict>
 </plist>

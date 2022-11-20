@@ -25,24 +25,4 @@ abstract class _UserStore extends EntityStore<List<CarEntity>> with Store {
   Future<void> getCarsFromUser(UserParams userParams) async {
     await loadEntity(LoadParams({'userParams': userParams}));
   }
-
-  // getTextFromImage(String imagePath) async {
-  //   // final CameraController _controller = CameraController(
-  //   //   const CameraDescription(
-  //   //     lensDirection: CameraLensDirection.back,
-  //   //     name: 'Scaner',
-  //   //     sensorOrientation: 0,
-  //   //   ),
-  //   //   ResolutionPreset.medium,
-  //   // );
-  //   // _controller.initialize();
-  //   final inputImage = InputImage.fromFilePath(imagePath);
-  //   final RecognizedText text =
-  //       await GoogleMlKit.vision.textRecognizer().processImage(inputImage);
-  //   for (TextBlock block in text.blocks) {
-  //     for (TextLine line in block.lines) {
-  //       print('text: ${line.text}');
-  //     }
-  //   }
-  // }
 }
